@@ -722,16 +722,27 @@
     if(form){
       form.addEventListener('submit', async function(e){
         e.preventDefault();
+        console.log('Отправка формы...'); // Вы увидите это в консоли
+        
         const data = new FormData(form);
         try {
-          await fetch(form.action, {
+          const response = await fetch(form.action, {
             method: 'POST',
             body: data,
             headers: {'Accept': 'application/json'}
           });
-          if(thanks) thanks.classList.add('show');
-          form.reset();
+          
+          const result = await response.json();
+          console.log('Ответ от сервера:', result); // Вы увидите результат здесь
+          
+          if(response.ok) {
+            if(thanks) thanks.classList.add('show');
+            form.reset();
+          } else {
+            alert('Ошибка: ' + JSON.stringify(result));
+          }
         } catch (error) {
+          console.error('Ошибка сети:', error);
           alert('Ошибка при отправке. Попробуйте еще раз.');
         }
       });
