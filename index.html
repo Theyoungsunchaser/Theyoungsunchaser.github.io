@@ -595,7 +595,7 @@
     <h2 class="reveal">Будете с нами?</h2>
     <p class="lead reveal">Пожалуйста, ответьте до определённой даты — это поможет нам всё подготовить к вашему приходу.</p>
 
-    <form class="reveal" id="rsvpForm">
+    <form class="reveal" id="rsvpForm" action="https://formspree.io/f/xpqgybbj" method="POST">
       <div class="field">
         <label for="name">Ваше имя</label>
         <input type="text" id="name" name="name" placeholder="Имя и фамилия" required>
@@ -720,10 +720,20 @@
     const form = document.getElementById('rsvpForm');
     const thanks = document.getElementById('thanksMsg');
     if(form){
-      form.addEventListener('submit', function(e){
+      form.addEventListener('submit', async function(e){
         e.preventDefault();
-        if(thanks) thanks.classList.add('show');
-        form.reset();
+        const data = new FormData(form);
+        try {
+          await fetch(form.action, {
+            method: 'POST',
+            body: data,
+            headers: {'Accept': 'application/json'}
+          });
+          if(thanks) thanks.classList.add('show');
+          form.reset();
+        } catch (error) {
+          alert('Ошибка при отправке. Попробуйте еще раз.');
+        }
       });
     }
   }catch(err){
